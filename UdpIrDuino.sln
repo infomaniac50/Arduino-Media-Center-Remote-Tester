@@ -1,0 +1,18 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+# SharpDevelop 4.3
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UdpIrDuino", "UdpIrDuino\UdpIrDuino.csproj", "{4775704D-6467-4E21-8CD2-40F4B681FDAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4775704D-6467-4E21-8CD2-40F4B681FDAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4775704D-6467-4E21-8CD2-40F4B681FDAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4775704D-6467-4E21-8CD2-40F4B681FDAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4775704D-6467-4E21-8CD2-40F4B681FDAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+EndGlobal
