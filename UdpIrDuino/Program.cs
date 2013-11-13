@@ -10,6 +10,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
@@ -31,20 +32,22 @@ namespace UdpIrDuino
 	}
 
 
-	[StructLayout(LayoutKind.Sequential)]
+	// struct IrCode
+	// {
+	//   unsigned long long value;
+	//   int nbits;
+	//   unsigned long ex1;
+	//   unsigned long ex2;
+	// };
+
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack=1)]
 	struct IrCode
 	{
-		public UInt64 value;
+		public Int16 type;
 		public Int16 nbits;
 		public UInt32 ex1;
 		public UInt32 ex2;
-	}
-	
-	[StructLayout(LayoutKind.Sequential)]
-	struct IrPacket
-	{
-		public Int16 type;
-		public IrCode code;
+		public UInt64 value;
 	}
 	
 	class Program
@@ -52,8 +55,6 @@ namespace UdpIrDuino
 		public static void Main(string[] args)
 		{
 			ConsoleKey again = ConsoleKey.Enter;
-			string line;
-			ulong num;
 
 			Console.WriteLine("Welcome to the UDP packet sender.");
 			
@@ -69,12 +70,12 @@ namespace UdpIrDuino
 			}
 		}
 
-		public static void MakePacket(UdpClient client)
+		public static void MakePacket (UdpClient client)
 		{
-			IrPacket packet = new IrPacket();
+			IrCode packet = new IrCode ();
 
-			Console.Write("Enter Code Type: ");
-			switch (Console.ReadLine()) {
+			Console.Write ("Enter Code Type: ");
+			switch (Console.ReadLine ()) {
 			case "NEC":
 				packet.type = (Int16)IrCodeType.NEC;
 				break;
@@ -103,38 +104,45 @@ namespace UdpIrDuino
 				break;
 			}
 
-			Console.WriteLine("Enter Bit Length");
-			if(!Int16.TryParse(Console.ReadLine(), out packet.code.nbits))
-			{
+			Console.WriteLine ("Enter Bit Length");
+			if (!Int16.TryParse (Console.ReadLine (), out packet.nbits)) {
 				Console.WriteLine ("Not a valid number.");
 				return;
 			}
 
-			packet.code.nbits = Math.Abs(packet.code.nbits);
+			packet.nbits = Math.Abs (packet.nbits);
 
-			Console.WriteLine("Enter an unsigned 64 bit integer.");
+			Console.WriteLine ("Enter an unsigned 64 bit integer.");
 
 
-			if (!UInt64.TryParse(Console.ReadLine(), out packet.code.value))
-			{
-				Console.WriteLine("Not a valid number.");
+			if (!UInt64.TryParse (Console.ReadLine (), out packet.value)) {
+				Console.WriteLine ("Not a valid number.");
 			}
 
-			BinaryFormatter bf = new BinaryFormatter();
-			MemoryStream ms = new MemoryStream();
-			bf.Serialize(ms, packet);
-			client.Send(ms.ToArray(), System.Runtime.InteropServices.Marshal.SizeOf(packet));
+
+
+			unsafe {
+				byte[] arr = Serialize(packet);
+				client.Send(arr, Marshal.SizeOf(packet));
+			}
+
 		}
 
-		// Convert an object to a byte array
-		private static byte[] ObjectToByteArray(Object obj)
-		{
-		    if(obj == null)
-		        return null;
-		    BinaryFormatter bf = new BinaryFormatter();
-		    MemoryStream ms = new MemoryStream();
-		    bf.Serialize(ms, obj);
-		    return ms.ToArray();
-		}
+		/// <summary>
+	    /// Serializes the specified object into a byte array.
+	    /// </summary>
+	    /// <param name="nativeObject">The object to serialize.</param>
+	    /// <returns></returns>
+	    public static byte[] Serialize(object obj)
+	    {
+	        //Type objectType = obj.GetType();
+	        int objectSize = Marshal.SizeOf(obj);
+	        IntPtr buffer = Marshal.AllocHGlobal(objectSize);
+	        Marshal.StructureToPtr(obj, buffer, false);
+	        byte[] array = new byte[objectSize];
+	        Marshal.Copy(buffer, array , 0, objectSize);
+	        Marshal.FreeHGlobal(buffer);
+	        return array;
+	    }
 	}
 }
