@@ -7,8 +7,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>UdpIrDuino</RootNamespace>
     <AssemblyName>UdpIrDuino</AssemblyName>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <NoWin32Manifest>False</NoWin32Manifest>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
