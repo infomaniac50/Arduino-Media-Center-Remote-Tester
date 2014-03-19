@@ -201,5 +201,11 @@ namespace UdpIrDuino
 		//
 		//			return true;
 		//		}
+
+		
+		void StayOnTopToolStripMenuItemCheckedChanged(object sender, EventArgs e)
+		{
+			this.TopMost = stayOnTopToolStripMenuItem.Checked;
+		}
 	}
 }
